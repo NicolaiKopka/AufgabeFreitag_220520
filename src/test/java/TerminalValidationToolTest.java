@@ -9,7 +9,8 @@ class TerminalValidationToolTest {
         String testPassword = "langesPasswort1234#";
         String message = "All good!";
         String[] expected = {message};
-        String[] actual = TerminalValidationTool.generateMessages(testPassword);
+        boolean[] results = ValidationMethods.checkAllCases(testPassword);
+        String[] actual = TerminalValidationTool.generateMessages(results);
         assertArrayEquals(expected, actual);
     }
 
@@ -18,7 +19,8 @@ class TerminalValidationToolTest {
         String testPassword = "kUrz1#";
         String message = "Password too short. min 8 characters required";
         String[] expected = {message};
-        String[] actual = TerminalValidationTool.generateMessages(testPassword);
+        boolean[] results = ValidationMethods.checkAllCases(testPassword);
+        String[] actual = TerminalValidationTool.generateMessages(results);
         assertArrayEquals(expected, actual);
     }
 
@@ -27,7 +29,8 @@ class TerminalValidationToolTest {
         String testPassword = "langesPwkeineZahl@";
         String message = "Password does not contain numbers. At least one required";
         String[] expected = {message};
-        String[] actual = TerminalValidationTool.generateMessages(testPassword);
+        boolean[] results = ValidationMethods.checkAllCases(testPassword);
+        String[] actual = TerminalValidationTool.generateMessages(results);
         assertArrayEquals(expected, actual);
     }
 
@@ -36,7 +39,8 @@ class TerminalValidationToolTest {
         String testPassword = "langesPwM1tZahl";
         String message = "Password does not contain NonAlphaNumeric Characters. At least one required";
         String[] expected = {message};
-        String[] actual = TerminalValidationTool.generateMessages(testPassword);
+        boolean[] results = ValidationMethods.checkAllCases(testPassword);
+        String[] actual = TerminalValidationTool.generateMessages(results);
         assertArrayEquals(expected, actual);
     }
 
@@ -45,20 +49,33 @@ class TerminalValidationToolTest {
         String testPassword = "langespwm1t#";
         String message = "Password does not contain upper case letters. At least one required";
         String[] expected = {message};
-        String[] actual = TerminalValidationTool.generateMessages(testPassword);
+        boolean[] results = ValidationMethods.checkAllCases(testPassword);
+        String[] actual = TerminalValidationTool.generateMessages(results);
         assertArrayEquals(expected, actual);
     }
 
     @Test
-    void shouldReturnStringArrayWithMessagesIfAllFails() {
+    void shouldReturnStringArrayWithMessageIfLowerCaseFails() {
+        String testPassword = "LANGESPW45%";
+        String message = "Password does not contain lower case letters. At least one required";
+        String[] expected = {message};
+        boolean[] results = ValidationMethods.checkAllCases(testPassword);
+        String[] actual = TerminalValidationTool.generateMessages(results);
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void shouldReturnStringArrayWithMessagesIfMultipleFails() {
         String testPassword = "kurz";
         String messageLength = "Password too short. min 8 characters required";
         String messageNumber = "Password does not contain numbers. At least one required";
         String messageUpperCase = "Password does not contain upper case letters. At least one required";
         String messageAlphaNumeric = "Password does not contain NonAlphaNumeric Characters. At least one required";
-        String[] expected = {messageLength, messageNumber, messageUpperCase, messageAlphaNumeric};
-        String[] actual = TerminalValidationTool.generateMessages(testPassword);
+        String[] expected = {messageLength, messageUpperCase, messageAlphaNumeric, messageNumber};
+        boolean[] results = ValidationMethods.checkAllCases(testPassword);
+        String[] actual = TerminalValidationTool.generateMessages(results);
         assertArrayEquals(expected, actual);
     }
 
+    //ready for review
 }

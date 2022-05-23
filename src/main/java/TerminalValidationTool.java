@@ -8,6 +8,7 @@ public class TerminalValidationTool {
     private static final String FAIL_LENGTH_MESSAGE = "Password too short. min 8 characters required";
     private static final String FAIL_NUMBERS_MESSAGE = "Password does not contain numbers. At least one required";
     private static final String FAIL_UPPER_CASE_MESSAGE = "Password does not contain upper case letters. At least one required";
+    private static final String FAIL_LOWER_CASE_MESSAGE = "Password does not contain lower case letters. At least one required";
     private static final String FAIL_NON_ALPHA_NUMERIC_MESSAGE = "Password does not contain NonAlphaNumeric Characters. At least one required";
 
     public static void main(String[] args) {
@@ -49,7 +50,8 @@ public class TerminalValidationTool {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter a password to check");
         String password = scanner.nextLine();
-        String[] messages = generateMessages(password);
+        boolean[] results = ValidationMethods.checkAllCases(password);
+        String[] messages = generateMessages(results);
         printMessages(messages);
     }
 
@@ -67,7 +69,7 @@ public class TerminalValidationTool {
             running = goAgainMethod();
         }
         String[] pwArray = passwordList.toArray(new String[0]);
-        boolean[] resultArray = ValidationMethods.checkPwList(pwArray);
+        boolean[][] resultArray = ValidationMethods.checkPwList(pwArray);
         evaluatePWResults(pwArray, resultArray);
     }
     private static boolean goAgainMethod() {
@@ -86,13 +88,13 @@ public class TerminalValidationTool {
         return true;
     }
 
-    private static void evaluatePWResults(String[] pwArray, boolean[] resultArray) {
+    private static void evaluatePWResults(String[] pwArray, boolean[][] resultArray) {
         if(pwArray.length == 0) {
             System.out.println(NO_PASSWORDS_MESSAGE);
         }else {
             for (int i = 0; i < resultArray.length; i++) {
                 System.out.printf("Password %d: (%s)\n", (i + 1), pwArray[i]);
-                String[] messages = generateMessages(pwArray[i]);
+                String[] messages = generateMessages(resultArray[i]);
                 printMessages(messages);
                 System.out.println("-----------------------");
             }
@@ -104,25 +106,31 @@ public class TerminalValidationTool {
             System.out.println(message);
         }
     }
-    public static String[] generateMessages(String password) {
+    public static String[] generateMessages(boolean[] validationArray) {
         ArrayList<String> messageList = new ArrayList<>();
 
-        if(ValidationMethods.checkAllCases(password)) {
-            messageList.add(VALIDATION_MESSAGE);
-        }
-        if(!ValidationMethods.checkPasswordLength(password)) {
+        if(!validationArray[0]) {
             messageList.add(FAIL_LENGTH_MESSAGE);
         }
-        if(!ValidationMethods.checkForNumbers(password)) {
-            messageList.add(FAIL_NUMBERS_MESSAGE);
+        if(!validationArray[1]) {
+            messageList.add(FAIL_LOWER_CASE_MESSAGE);
         }
-        if(!ValidationMethods.checkForUpperCaseLetters(password)) {
+        if(!validationArray[2]) {
             messageList.add(FAIL_UPPER_CASE_MESSAGE);
         }
-        if(!ValidationMethods.checkForAlphaNumeric(password)) {
+        if(!validationArray[3]) {
             messageList.add(FAIL_NON_ALPHA_NUMERIC_MESSAGE);
+        }
+        if(!validationArray[4]) {
+            messageList.add(FAIL_NUMBERS_MESSAGE);
+        }
+
+        if(messageList.isEmpty()) {
+            messageList.add(VALIDATION_MESSAGE);
         }
 
         return messageList.toArray(new String[0]);
     }
+
+    //ready for review
 }
